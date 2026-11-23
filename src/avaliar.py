@@ -13,9 +13,14 @@ from .models import SmallCNN
 
 def main():
     # Sem argumentos avalia no teste; com uma pasta, avalia nessa pasta (teste externo)
+        # python -m src.avaliar PASTA          -> externo, redimensionado a 224 x 224
+    # python -m src.avaliar PASTA nativo   -> externo, tamanho original (sem deformar)
     if len(sys.argv) > 1:
-        ds, nome = PastaDataset(sys.argv[1]), "externo"
+        nativo = len(sys.argv) > 2 and sys.argv[2] == "nativo"
+        ds = PastaDataset(sys.argv[1], redimensionar=not nativo)
+        nome = "externo_nativo" if nativo else "externo"
     else:
+        nativo = False
         ds, nome = CrackDataset("test"), "teste"
     print(f"A avaliar '{nome}' com {len(ds)} imagens")
 
@@ -23,7 +28,7 @@ def main():
     modelo.load_state_dict(torch.load(config.MODELS_DIR / "cnn.pt"))
     modelo.eval()
 
-    loader = DataLoader(ds, batch_size=64, num_workers=2)
+    loader = DataLoader(ds, batch_size=1 if nativo else 64, num_workers=2)
     probs = []
     with torch.no_grad():
         for x, _ in loader:

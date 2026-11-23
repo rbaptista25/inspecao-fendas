@@ -43,7 +43,7 @@ class CrackDataset(Dataset):
 class PastaDataset(Dataset):
     """Imagens em <raiz>/negative e <raiz>/positive (maiúsculas ou minúsculas), para testes externos."""
 
-    def __init__(self, raiz):
+    def __init__(self, raiz, redimensionar=True):
         self.paths, self.labels = [], []
         for pasta in sorted(Path(raiz).iterdir()):
             nome = pasta.name.lower()
@@ -55,7 +55,10 @@ class PastaDataset(Dataset):
                         self.labels.append(rotulo)
         if not self.paths:
             raise FileNotFoundError(f"Não encontrei pastas positive/negative com imagens em {raiz}")
-        self.transform = transformacoes(treino=False)
+        if redimensionar:
+            self.transform = transformacoes(treino=False)
+        else:
+            self.transform = T.Compose([T.ToTensor(), T.Normalize(MEDIA, DESVIO)])
 
     def __len__(self):
         return len(self.paths)
