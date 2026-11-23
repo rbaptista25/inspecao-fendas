@@ -1,0 +1,8 @@
+path,label,pred,prob_fenda
+Positive/03298.jpg,1,0,0.110841386
+Negative/17845.jpg,0,1,0.68727994
+Negative/00283.jpg,0,1,0.92758536
+Negative/08054.jpg,0,1,0.66771436
+Negative/15989.jpg,0,1,0.78991634
+Positive/04319.jpg,1,0,0.28503418
+Negative/15518.jpg,0,1,0.9999999
