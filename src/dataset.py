@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms as T
@@ -37,4 +38,28 @@ class CrackDataset(Dataset):
 
     def __getitem__(self, i):
         img = Image.open(config.DATA_RAW / self.paths[i]).convert("RGB")
+        return self.transform(img), self.labels[i]
+
+class PastaDataset(Dataset):
+    """Imagens em <raiz>/negative e <raiz>/positive (maiúsculas ou minúsculas), para testes externos."""
+
+    def __init__(self, raiz):
+        self.paths, self.labels = [], []
+        for pasta in sorted(Path(raiz).iterdir()):
+            nome = pasta.name.lower()
+            if pasta.is_dir() and nome in ("negative", "positive"):
+                rotulo = 1 if nome == "positive" else 0
+                for p in sorted(pasta.iterdir()):
+                    if p.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                        self.paths.append(p)
+                        self.labels.append(rotulo)
+        if not self.paths:
+            raise FileNotFoundError(f"Não encontrei pastas positive/negative com imagens em {raiz}")
+        self.transform = transformacoes(treino=False)
+
+    def __len__(self):
+        return len(self.paths)
+
+    def __getitem__(self, i):
+        img = Image.open(self.paths[i]).convert("RGB")
         return self.transform(img), self.labels[i]
