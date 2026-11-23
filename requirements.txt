@@ -1,0 +1,13 @@
+# O PyTorch instala-se à parte (versão CPU):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+numpy
+pandas
+pillow
+matplotlib
+scikit-learn
+scikit-image
+tqdm
+onnx
+onnxruntime
+jupyter
+pytest
